@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+    --color-insignia-bg: #FFFDF5;
+    --color-insignia-violet: #8B5CF6;
+    --color-insignia-cyan: #06B6D4;
+    --color-insignia-yellow: #FAFF00;
+    --color-insignia-black: #000000;
+
+    --font-display: "Archivo Black", "Montserrat", sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
+
+    --shadow-hard: 6px 6px 0px 0px #000000;
+    --shadow-hard-sm: 3px 3px 0px 0px #000000;
+    --shadow-hard-lg: 8px 8px 0px 0px #000000;
+}
+
+@layer base {
+    body {
+        background-color: #FFFDF5;
+        color: #000000;
+    }
+}
