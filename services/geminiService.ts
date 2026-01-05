@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import { SearchResult } from "../types";
 
-const apiKey = process.env.API_KEY || '';
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
 const ai = new GoogleGenAI({ apiKey });
 
 /**
@@ -34,10 +34,10 @@ export const findNicheTrends = async (niche: string): Promise<SearchResult> => {
     // we might parse this into JSON using responseSchema. For this brutalist UI,
     // raw text with grounding links looks technical and cool.
     const text = response.text || "No se pudieron generar ideas en este momento.";
-    
+
     // Extract search sources if available for display
     const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
-    
+
     return {
       ideas: [], // Not strictly parsing to object for this UI style, using rawText
       rawText: text,
@@ -73,7 +73,7 @@ export const generateThumbnailConcept = async (videoTitle: string): Promise<stri
         return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
       }
     }
-    
+
     return null;
   } catch (error) {
     console.error("Error generating thumbnail:", error);
