@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import { generateThumbnailConcept } from '../services/geminiService';
+import { captureLead } from '../services/supabaseClient';
 
 export const ThumbnailGenerator: React.FC = () => {
   const [title, setTitle] = useState('');
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
@@ -16,6 +18,11 @@ export const ThumbnailGenerator: React.FC = () => {
     setImageUrl(null);
 
     try {
+      // Capture lead in parallel
+      if (email) {
+        captureLead(email, 'thumbnail_generator', { title });
+      }
+
       const url = await generateThumbnailConcept(title);
       setImageUrl(url);
     } catch (error) {
@@ -30,26 +37,35 @@ export const ThumbnailGenerator: React.FC = () => {
     <section className="py-20 px-6 max-w-6xl mx-auto">
       <div className="bg-insignia-violet p-1 border-[4px] border-black shadow-hard-lg">
         <div className="bg-insignia-bg border-[3px] border-black p-8 md:p-12">
-          
+
           <div className="text-center mb-12">
             <span className="bg-insignia-yellow border-[2px] border-black px-3 py-1 font-mono font-bold text-sm mb-4 inline-block shadow-hard-sm">
               HERRAMIENTA VISUAL
             </span>
             <h2 className="font-display text-4xl md:text-6xl font-black leading-tight uppercase">
-              Generador de<br/>Miniaturas
+              Generador de<br />Miniaturas
             </h2>
           </div>
 
           <div className="max-w-3xl mx-auto flex flex-col gap-12">
             {/* Input Area */}
             <form onSubmit={handleGenerate} className="flex flex-col md:flex-row gap-4 items-end">
-              <Input 
-                label="Título de tu próximo video"
-                placeholder="Ej: Cómo gané $1000 con IA en 24 horas..."
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-              />
+              <div className="flex-1 w-full space-y-4 md:space-y-0 md:flex md:gap-4 md:items-end">
+                <Input
+                  label="Título de tu próximo video"
+                  placeholder="Ej: Cómo gané $1000 con IA en 24 horas..."
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                />
+                <Input
+                  type="email"
+                  label="Tu mejor correo (Opcional)"
+                  placeholder="usuario@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
               <Button type="submit" variant="primary" disabled={loading} className="md:w-auto w-full">
                 {loading ? "GENERANDO..." : "GENERAR PREVIEW"}
               </Button>
@@ -82,15 +98,15 @@ export const ThumbnailGenerator: React.FC = () => {
 
               {/* Watermark */}
               <div className="absolute bottom-4 right-4 z-10 opacity-50">
-                 <span className="font-display text-white text-xs tracking-widest uppercase bg-black px-2 py-1">Agencia Insignia</span>
+                <span className="font-display text-white text-xs tracking-widest uppercase bg-black px-2 py-1">Agencia Insignia</span>
               </div>
-              
-               {/* Fake Progress Bar */}
-               <div className="absolute bottom-0 left-0 w-full h-1 bg-white/20">
-                  <div className="h-full bg-red-600 w-2/3 relative">
-                    <div className="absolute right-0 -top-1 w-3 h-3 bg-red-600 rounded-full"></div>
-                  </div>
-               </div>
+
+              {/* Fake Progress Bar */}
+              <div className="absolute bottom-0 left-0 w-full h-1 bg-white/20">
+                <div className="h-full bg-red-600 w-2/3 relative">
+                  <div className="absolute right-0 -top-1 w-3 h-3 bg-red-600 rounded-full"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

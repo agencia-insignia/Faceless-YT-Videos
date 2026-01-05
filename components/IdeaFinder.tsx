@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import { findNicheTrends } from '../services/geminiService';
+import { captureLead } from '../services/supabaseClient';
 
 export const IdeaFinder: React.FC = () => {
   const [niche, setNiche] = useState('');
@@ -17,6 +18,11 @@ export const IdeaFinder: React.FC = () => {
     setResult(null);
 
     try {
+      // Capture lead in parallel
+      if (email) {
+        captureLead(email, 'idea_finder', { niche });
+      }
+
       const data = await findNicheTrends(niche);
       setResult(data.rawText);
     } catch (error) {
@@ -39,19 +45,19 @@ export const IdeaFinder: React.FC = () => {
           {/* Left: Inputs */}
           <div className="p-8 md:p-12 border-b-[4px] md:border-b-0 md:border-r-[4px] border-black flex flex-col justify-center">
             <h2 className="font-display text-4xl md:text-5xl font-black mb-8 leading-none">
-              BUSCADOR DE<br/>
+              BUSCADOR DE<br />
               <span className="text-insignia-violet">TENDENCIAS</span>
             </h2>
-            
+
             <form onSubmit={handleSubmit} className="space-y-6">
-              <Input 
+              <Input
                 label="¿Cuál es tu nicho o interés?"
                 placeholder="Ej: Finanzas, True Crime, IA..."
                 value={niche}
                 onChange={(e) => setNiche(e.target.value)}
                 required
               />
-              <Input 
+              <Input
                 type="email"
                 label="Tu mejor correo (Opcional)"
                 placeholder="usuario@email.com"
@@ -88,11 +94,11 @@ export const IdeaFinder: React.FC = () => {
               </div>
             ) : (
               <div className="flex-1 flex items-center justify-center text-gray-400 text-center">
-                &gt; Esperando input del usuario...<br/>
+                &gt; Esperando input del usuario...<br />
                 &gt; Ingresa un nicho para comenzar.
               </div>
             )}
-            
+
             {result && (
               <div className="mt-6 pt-4 border-t-[3px] border-black/10 text-xs text-gray-500">
                 Datos procesados por Gemini Grounding. Verifica siempre las fuentes.
